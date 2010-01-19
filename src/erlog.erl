@@ -80,8 +80,8 @@ top_cmd({reconsult,File}, Db0) ->
 top_cmd(get_db, Db) ->
     {{ok,Db},fun (Cmd) -> top_cmd(Cmd, Db) end};
 top_cmd({set_db,NewDb}, _Db) ->
-    {ok,fun (Cmd) -> top_cmd(Cmd, NewDb) end};
-top_cmd(halt, _Db) -> ok.
+    {ok,fun (Cmd) -> top_cmd(Cmd, NewDb) end}.
+
 
 prove_goal(Goal0, Db) ->
     Vs = vars_in(Goal0),
@@ -162,6 +162,8 @@ start_link() ->
 
 server_loop(P0) ->
     receive
+	{erlog_request, From, halt} ->
+	    send_reply(From, ok);
 	{erlog_request,From,Req} ->
 	    {Res,P1} = P0(Req),
 	    send_reply(From, Res),
